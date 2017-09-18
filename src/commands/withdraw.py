@@ -32,7 +32,7 @@ class AmountStep(BasePostStep):
         for share in shares:
             value = share * self.post.balance
             if value >= config.MIN_AMOUNT:
-                keyboard.append(str(value))
+                keyboard.append(str(round(value, 4)))
         self.send_message(
             'balance of post = {}\n\n*how much you would like to withdraw?*'.format(self.post.balance),
             keyboards=[keyboard]

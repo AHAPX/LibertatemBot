@@ -181,7 +181,6 @@ class BasePostEntryStep(BasePostStep):
                 self.send_message('post not found')
                 return
         try:
-            result = self.run()
-            self.check_next(result)
+            return self.run()
         except Exception as e:
             logger.error(e)
