@@ -6,6 +6,8 @@ import random
 import telegram
 
 import config
+import consts
+from errors import ContentError
 
 
 def get_logger(name):
@@ -72,51 +74,15 @@ def fetch_posts(select):
     posts = []
     counter = 1
     for post in select:
-        text.append('*number: {}*\n*balance {}*\n`{}`'.format(counter, post.get_full_balance(), text_cut(post.text)))
+        text.append('*number: {}*\n*balance {}*\n`{}`'.format(
+            counter,
+            post.get_full_balance(),
+            text_cut(post.content.text)
+        ))
         posts.append(post.id)
         keyboard.append(str(counter))
         counter += 1
     return posts, text, keyboard_split(keyboard)
-
-
-def post_message(post, balance, bot=None):
-    bot = bot or get_bot()
-    if post.forward_chat_id and post.forward_message_id:
-        message = bot.forward_message(
-            chat_id=config.CHANNEL_NAME,
-            from_chat_id=post.forward_chat_id,
-            message_id=post.forward_message_id
-        )
-    else:
-        message = bot.send_message(config.CHANNEL_NAME, text=post.text, parse_mode='Markdown')
-    post.balance = balance
-    post.message_id = message.message_id
-    post.save()
-    if post.user:
-        send_message(bot, int(post.user), text='your message was posted')
-
-
-def add_react(react, amount, bot=None):
-    bot = bot or get_bot()
-    name = 'like' if react.is_like else 'dislike'
-    react.amount = amount
-    react.save()
-    if react.is_like:
-        react.post.balance += amount
-    else:
-        react.post.balance -= amount
-    if react.post.balance <= 0:
-        react.post.is_deleted = True
-    react.post.save()
-    if react.user:
-        send_message(bot, int(react.user), text='your {} accepted'.format(name))
-    if react.post.user:
-        send_message(bot, int(react.post.user), text='your post received {} for {}ETH'.format(name, react.amount))
-# TODO: what if delete return error, but db already changed
-    if react.post.balance <= 0:
-        bot.delete_message(chat_id=config.CHANNEL_NAME, message_id=react.post.message_id)
-        if react.post.user:
-            send_message(bot, int(react.post.user), text='your post was deleted')
 
 
 def check_next(data):
@@ -133,3 +99,27 @@ def merge_dicts(d1, d2):
     result = copy.copy(d1)
     result.update(d2)
     return result
+
+
+def get_content(message):
+    cont_type = consts.CONTENT_TEXT
+    text = message.text
+    file_id = None
+    if message.photo:
+        file_id = message.photo[0].file_id
+        cont_type = consts.CONTENT_PHOTO
+    elif message.audio:
+        file_id = message.audio.file_id
+        cont_type = consts.CONTENT_AUDIO
+    elif message.voice:
+        file_id = message.voice.file_id
+        cont_type = consts.CONTENT_VOICE
+    elif message.video:
+        file_id = message.video.file_id
+        cont_type = consts.CONTENT_VIDEO
+    elif message.sticker:
+        file_id = message.sticker.file_id
+        cont_type = consts.CONTENT_STICKER
+    if not (text or file_id):
+        raise ContentError
+    return cont_type, text, file_id

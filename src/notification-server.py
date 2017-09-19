@@ -4,7 +4,6 @@ from http.server import BaseHTTPRequestHandler
 from socketserver import TCPServer
 
 import config
-from helpers import post_message, add_react
 from models import Address
 
 
@@ -41,10 +40,9 @@ def handle(data):
         try:
             if amount != addr.balance:
                 if addr.post.count():
-                    post_message(addr.post[0], amount)
+                    addr.post[0].send(amount)
                 elif addr.reaction.count():
-                    add_react(addr.reaction[0], amount)
-                addr.is_accepted = True
+                    addr.reaction[0].send(amount)
                 logger.info('addr = {} ({}) accepted'.format(addr.address, addr.id))
             addr.balance += amount
             addr.save()

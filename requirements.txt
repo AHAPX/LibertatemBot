@@ -7,6 +7,7 @@ ethereum-utils==0.4.0
 future==0.16.0
 idna==2.6
 peewee==2.10.1
+peewee-db-evolve==0.6.4
 psycopg2==2.7.3.1
 pycrypto==2.6.1
 pylru==1.0.9

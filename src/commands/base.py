@@ -1,9 +1,10 @@
 import config
+import consts
 import validators
 from errors import CriticalError, ValidationError
 from entrypoint import BaseEntrypoint
 from helpers import get_args, get_logger, check_next, merge_dicts, fetch_posts
-from models import Post, Address
+from models import Post, Address, Content
 
 
 logger = get_logger('bot')
@@ -79,10 +80,14 @@ class BasePostCommand(BaseCommand):
             super(BasePostCommand, self).entrypoint(bot, update)
 
     def print_posts(self):
-        select = Post.select().join(Address).\
+        select = Post.select().\
+            join(Address).\
+            switch(Post).\
+            join(Content).\
             where(
                 Address.is_accepted == True,
-                Post.is_deleted == False
+                Post.is_deleted == False,
+                Content.type == consts.CONTENT_TEXT
             ).\
             order_by(Post.created_at.desc()).\
             limit(config.POSTS_LIMIT)

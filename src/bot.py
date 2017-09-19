@@ -50,7 +50,7 @@ class Bot(BaseEntrypoint):
             return True
         return False
 
-    def entrypoint(self, bot, update):
+    def entirypoint(self, bot, update):
         super(Bot, self).entrypoint(bot, update)
         if self.is_post():
             return
@@ -73,7 +73,11 @@ class Bot(BaseEntrypoint):
 
     def run(self):
         updater = Updater(config.TOKEN)
-        updater.dispatcher.add_handler(MessageHandler(Filters.text, self.entrypoint))
+        updater.dispatcher.add_handler(MessageHandler(Filters.text, self.entirypoint))
+        for t in config.MESSAGE_TYPES:
+            filt = getattr(Filters, t, None)
+            if filt:
+                updater.dispatcher.add_handler(MessageHandler(filt, self.entirypoint))
         updater.dispatcher.add_error_handler(error_callback)
         self.list_commands = []
         self.post_commands = []

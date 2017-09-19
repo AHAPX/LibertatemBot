@@ -12,3 +12,7 @@ class CriticalError(BaseException):
 
 class ValidationError(BaseError):
     message = 'validation error'
+
+
+class ContentError(BaseError):
+    message = 'content is not supported'

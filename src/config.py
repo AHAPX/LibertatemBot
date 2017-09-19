@@ -8,6 +8,7 @@ TEXT_CUT_MIN = 100
 TEXT_CUT_MAX = 130
 MIN_AMOUNT = 0.001
 COMMANDS_IN_LINE = 5
+MESSAGE_TYPES = ['photo', 'sticker', 'audio', 'voice', 'video']
 
 ### MUST BE SET UP IN local.py
 # telegram settions

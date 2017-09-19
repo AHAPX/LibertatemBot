@@ -1,7 +1,6 @@
 import config
 import validators
 from commands.base import BaseCommand, BaseStep
-from helpers import post_message, add_react
 from models import Address, Post, Reaction
 
 
@@ -75,10 +74,7 @@ class ConfirmStep(BaseStep):
             return
         with config.DB.atomic() as tnx:
             try:
-                if isinstance(item, Post):
-                    post_message(item, amount)
-                elif isinstance(item, Reaction):
-                    add_react(item, amount)
+                item.send(amount)
                 item.address.is_accepted = True
                 item.address.balance = amount
                 item.address.save()
