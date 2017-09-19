@@ -40,7 +40,7 @@ class Bot(BaseEntrypoint):
             self.set_session(post_id=post.id)
             text = '*balance: {}*\n`{}`\n\n*what would you like to do with this post?*'.format(
                 post.get_full_balance(),
-                text_cut(post.text)
+                text_cut(post.content.text)
             )
             keyboards = []
             for com in self.post_commands:
