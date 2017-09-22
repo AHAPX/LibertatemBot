@@ -11,6 +11,6 @@ commands = (
     withdraw.WithdrawCommand,
     settings.SettingsCommand,
     main.PingCommand,
-    debug.ConfirmCommand,
     main.CancelCommand,
+    debug.ConfirmCommand,
 )

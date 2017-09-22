@@ -55,8 +55,8 @@ class Post(Model):
     message_id = IntegerField(null=True)
     content = ForeignKeyField(Content, related_name='post', on_delete='SET NULL', null=True)
     text = TextField(null=True)
-    forward_chat_id = CharField(null=True)
     forward_message_id = CharField(null=True)
+    forward_datestamp = IntegerField(null=True)
     token = CharField()
     balance = FloatField(default=0)
     is_deleted = BooleanField(default=False)
@@ -81,10 +81,10 @@ class Post(Model):
 
     def send(self, balance, bot=None):
         bot = bot or get_bot()
-        if self.forward_chat_id and self.forward_message_id:
+        if self.user and self.forward_message_id:
             message = bot.forward_message(
                 chat_id=config.CHANNEL_NAME,
-                from_chat_id=self.forward_chat_id,
+                from_chat_id=self.user,
                 message_id=self.forward_message_id
             )
         else:

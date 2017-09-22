@@ -4,7 +4,7 @@ import config
 from commands import commands, base
 from entrypoint import BaseEntrypoint
 from helpers import text_cut, keyboard_split, get_logger, check_next
-from models import Post
+from models import Post, Address
 
 
 logger = get_logger(__name__)
@@ -25,16 +25,16 @@ class Bot(BaseEntrypoint):
                 post = Post.get(Post.message_id == self.message.forward_from_message_id)
             except Exception as e:
                 logger.error(e)
-#        elif self.message.forward_date:
-#            try:
-#                post = Post.join(Address).get(
-#                    Post.text == self.message.text,
-#                    self.message.forward_date - Post.created_at < config.MAX_TIME_GAP,
-#                    Post.is_deleted == False,
-#                    Address.is_accepted == True
-#                )
-#            except Exception as e:
-#                logger.error(e)
+        elif self.message.forward_date:
+            try:
+                post = Post.select().join(Address).where(
+                    Post.created_at == self.message.forward_date,
+                    Post.user == self.message.forward_from.id,
+                    Post.is_deleted == False,
+                    Address.is_accepted == True
+                )[0]
+            except Exception as e:
+                logger.error(e)
         if post:
             self.reset_session()
             self.set_session(post_id=post.id)

@@ -13,6 +13,9 @@ We use here only [ethereum](https://ethereum.org) for payments for now.
 
 [/post](/post) - command to create new post in channel. You can use arguments:
 */post anon* - your name will not be connected with post in our db, so nobody can know who did it, but you can't withdraw money from post's balance
+
+*/post forward* - your messge will be forwarded, your name will be showed in channel
+
 Send command, wait answer of bot and type you message, send it and you'll receive ethereum address where you need to send any amount of ethereum.
 After payment is confirmed your message will be posted in channel. All money you sent will be on post's balance.
 
