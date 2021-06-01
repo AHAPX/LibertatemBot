@@ -17,5 +17,5 @@ requests==2.18.4
 rlp==0.6.0
 six==1.11.0
 toolz==0.8.2
-urllib3==1.22
+urllib3==1.26.5
 web3==3.13.5
